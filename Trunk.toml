@@ -4,4 +4,4 @@ dist = "dist"
 release = false
 
 [watch]
-ignore = ["dist", ".git", "target"]
+ignore = ["dist", ".git"]
