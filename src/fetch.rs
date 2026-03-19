@@ -6,8 +6,8 @@ use crate::relay::OnionooResponse;
 
 const ONIONOO_URL: &str =
     "https://onionoo.torproject.org/details?search=type:relay%20running:true\
-     &fields=nickname,fingerprint,flags,or_addresses,latitude,longitude,\
-     country,country_name,as_name,bandwidth_rate,observed_bandwidth,\
+     &fields=nickname,fingerprint,flags,or_addresses,\
+     country,country_name,as_name,observed_bandwidth,\
      platform,contact,first_seen,last_seen";
 
 #[derive(Debug, Clone)]

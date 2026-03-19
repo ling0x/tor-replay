@@ -38,7 +38,7 @@ impl RelayPlugin {
             if !name_match && !ip_match && !fp_match { return false; }
         }
 
-        relay.latitude.is_some() && relay.longitude.is_some()
+        relay.position().is_some()
     }
 }
 
@@ -71,7 +71,7 @@ impl<'a> RelayMapPlugin<'a> {
             if !nm && !im && !fm { return false; }
         }
 
-        relay.latitude.is_some() && relay.longitude.is_some()
+        relay.position().is_some()
     }
 }
 
@@ -100,8 +100,10 @@ impl<'a> Plugin for RelayMapPlugin<'a> {
                 if notable != pass { continue; }
                 if !self.should_show(relay) { continue; }
 
-                let lat = relay.latitude.unwrap();
-                let lon = relay.longitude.unwrap();
+                let (lat, lon) = match relay.position() {
+                    Some(p) => p,
+                    None => continue,
+                };
                 let pos = projector.project(lat_lon(lat, lon)).to_pos2();
 
                 let rt      = relay.relay_type();

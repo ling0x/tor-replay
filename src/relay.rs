@@ -1,6 +1,7 @@
 //! Relay data model — mirrors the Onionoo `/details` response.
 
 use serde::Deserialize;
+use crate::geo;
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct OnionooResponse {
@@ -25,6 +26,7 @@ pub struct Relay {
     pub exit_policy:  Option<Vec<String>>,
     pub first_seen:   Option<String>,
     pub last_seen:    Option<String>,
+
 }
 
 impl Relay {
@@ -68,6 +70,27 @@ impl Relay {
 
     pub fn bandwidth_mbs(&self) -> Option<f64> {
         self.observed_bandwidth.map(|b| b as f64 / 1_000_000.0)
+    }
+
+    /// Resolve (lat, lon) for map placement.
+    /// Uses Onionoo native fields if present, otherwise falls back to
+    /// country centroid + deterministic jitter derived from the fingerprint.
+    pub fn position(&self) -> Option<(f64, f64)> {
+        if let (Some(lat), Some(lon)) = (self.latitude, self.longitude) {
+            return Some((lat, lon));
+        }
+        let cc = self.country.as_deref()?;
+        let (clat, clon) = geo::centroid(cc)?;
+
+        // Deterministic jitter from fingerprint bytes so relays don't all
+        // stack on exactly the same pixel. Spread ~±4 degrees.
+        let fp = &self.fingerprint;
+        let b0 = u8::from_str_radix(&fp[0..2], 16).unwrap_or(128) as f64;
+        let b1 = u8::from_str_radix(&fp[2..4], 16).unwrap_or(128) as f64;
+        let jlat = (b0 / 255.0 - 0.5) * 8.0;
+        let jlon = (b1 / 255.0 - 0.5) * 8.0;
+
+        Some((clat + jlat, clon + jlon))
     }
 }
 

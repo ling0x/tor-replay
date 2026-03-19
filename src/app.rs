@@ -63,9 +63,13 @@ impl TorReplayApp {
         // Kick off the live Onionoo fetch
         fetch::start_fetch(Arc::clone(&fetch_state), cc.egui_ctx.clone());
 
+        // Start zoomed out to show the whole world
+        let mut map_memory = MapMemory::default();
+        let _ = map_memory.set_zoom(2.0);
+
         Self {
             tiles,
-            map_memory: MapMemory::default(),
+            map_memory,
             fetch_state,
             filter_guard:  true,
             filter_exit:   true,
@@ -229,6 +233,7 @@ fn draw_left_panel(app: &mut TorReplayApp, ctx: &Context) {
 
             if ui.button("🌍 Reset view").clicked() {
                 app.map_memory = MapMemory::default();
+                let _ = app.map_memory.set_zoom(2.0);
             }
             if ui.button("✕ Clear selection").clicked() {
                 app.selected_idx = None;
@@ -289,7 +294,7 @@ fn draw_right_panel(app: &mut TorReplayApp, ctx: &Context) {
                     .auto_shrink([false; 2])
                     .show(ui, |ui| {
                         for (idx, relay) in d.relays.iter().enumerate() {
-                            if relay.latitude.is_none() { continue; }
+                            if relay.position().is_none() { continue; }
 
                             let rt    = relay.relay_type();
                             let color = rt.color();

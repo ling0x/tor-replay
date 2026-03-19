@@ -1,5 +1,6 @@
 mod app;
 mod fetch;
+mod geo;
 mod map_plugin;
 mod relay;
 
