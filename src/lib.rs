@@ -1,4 +1,5 @@
 mod app;
+mod cluster;
 mod fetch;
 mod geo;
 mod map_plugin;
