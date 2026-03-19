@@ -1,0 +1,60 @@
+[package]
+name = "tor-replay"
+version = "0.1.0"
+edition = "2021"
+authors = ["ling0x"]
+description = "A live Tor relay world map dashboard — built with egui/eframe and walkers"
+license = "MIT"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[[bin]]
+name = "tor-replay"
+path = "src/main.rs"
+required-features = []
+
+# Do not build the binary when targeting wasm32
+[package.metadata.trunk]
+binary = false
+
+[dependencies]
+eframe = { version = "0.33", default-features = false, features = [
+    "accesskit",
+    "default_fonts",
+    "glow",
+] }
+egui = "0.33"
+egui_extras = { version = "0.33", features = ["default"] }
+walkers = { version = "0.52" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# reqwest for data fetching (works on WASM and native)
+reqwest = { version = "0.12", features = ["json"] }
+
+# WASM-only
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen-futures = "0.4"
+wasm-bindgen = "0.2"
+console_error_panic_hook = "0.1"
+web-sys = { version = "0.3", features = [
+    "Window",
+    "Document",
+    "Element",
+] }
+getrandom = { version = "0.2", features = ["js"] }
+
+# Native-only
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+tokio = { version = "1", features = ["full"] }
+
+[profile.release]
+opt-level = 2
+lto = true
+
+[profile.wasm-release]
+inherits = "release"
+opt-level = "z"
+lto = true
+codegen-units = 1

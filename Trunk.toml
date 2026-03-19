@@ -1,0 +1,7 @@
+[build]
+target = "index.html"
+dist = "dist"
+release = false
+
+[watch]
+ignore = ["dist", ".git", "target"]
