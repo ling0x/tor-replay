@@ -2,7 +2,7 @@
 
 **Live Tor relay world map dashboard** — built with [egui](https://github.com/emilk/egui), [walkers](https://github.com/podusowski/walkers), and WebAssembly.
 
-![Dashboard showing world map with Tor relay dots](https://raw.githubusercontent.com/ling0x/tor-replay/main/screenshot.png)
+[Link to Demo](https://tor-replay.archon.workers.dev/)
 
 ## Features
 
